@@ -11,6 +11,7 @@ export type Product = {
   pieces: 2 | 3
   colors: string[]
   sizes: ("XS" | "S" | "M" | "L" | "XL" | "XXL")[]
+  stitched_type?: "stitched" | "unstitched" | null
   images: string[]
   cost_price: number
   packaging_cost: number

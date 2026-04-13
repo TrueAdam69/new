@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 import { uploadToCloudinary, generateSlug } from '@/lib/cloudinary'
@@ -8,10 +8,11 @@ import { uploadToCloudinary, generateSlug } from '@/lib/cloudinary'
 const CATEGORIES = ['Lawn', 'Chiffon', 'Cotton', 'Silk', 'Winter'] as const
 const PIECES = [2, 3] as const
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'] as const
+type StitchedType = 'stitched' | 'unstitched'
 
 export default function NewProductPage() {
   const router = useRouter()
-  const supabase = createSupabaseBrowserClient()
+  const supabase = useMemo(() => createSupabaseBrowserClient(), [])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [formData, setFormData] = useState({
@@ -36,6 +37,7 @@ export default function NewProductPage() {
     is_new: true,
     in_stock: true,
     whatsapp_order_enabled: true,
+    stitched_type: 'unstitched' as StitchedType,
   })
 
   const [colorInput, setColorInput] = useState('')
@@ -45,6 +47,7 @@ export default function NewProductPage() {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
   const slug = generateSlug(formData.name)
+  const isStitched = formData.stitched_type === 'stitched'
 
   // Live calculations
   const price = parseFloat(formData.price) || 0
@@ -148,7 +151,7 @@ export default function NewProductPage() {
       setToast({ message: 'At least one color is required', type: 'error' })
       return
     }
-    if (formData.sizes.length === 0) {
+    if (isStitched && formData.sizes.length === 0) {
       setToast({ message: 'At least one size is required', type: 'error' })
       return
     }
@@ -169,7 +172,7 @@ export default function NewProductPage() {
             category: formData.category,
             fabric: formData.fabric.trim(),
             collection: formData.collection.trim(),
-            pieces: formData.pieces,
+            pieces: parseInt(String(formData.pieces), 10),
             price: parseFloat(formData.price),
             original_price: formData.original_price ? parseFloat(formData.original_price) : null,
             cost_price: parseFloat(formData.cost_price),
@@ -177,7 +180,7 @@ export default function NewProductPage() {
             ad_cost: parseFloat(formData.ad_cost),
             delivery_cost: parseFloat(formData.delivery_cost),
             colors: formData.colors,
-            sizes: formData.sizes,
+            sizes: isStitched ? formData.sizes : [],
             images: formData.images,
             sale_tag_enabled: formData.sale_tag_enabled,
             sale_label: formData.sale_tag_enabled ? formData.sale_label : null,
@@ -185,6 +188,7 @@ export default function NewProductPage() {
             is_new: formData.is_new,
             in_stock: formData.in_stock,
             whatsapp_order_enabled: formData.whatsapp_order_enabled,
+            stitched_type: formData.stitched_type,
           }
         ])
 

@@ -1,5 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCloudinaryClient } from '@/lib/cloudinary';
+import { v2 as cloudinary } from 'cloudinary'
+
+function getCloudinaryClient() {
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME
+  const apiKey = process.env.CLOUDINARY_API_KEY
+  const apiSecret = process.env.CLOUDINARY_API_SECRET
+
+  if (!cloudName || !apiKey || !apiSecret) {
+    throw new Error('Cloudinary environment variables are not configured.')
+  }
+
+  cloudinary.config({
+    cloud_name: cloudName,
+    api_key: apiKey,
+    api_secret: apiSecret,
+    secure: true,
+  })
+
+  return cloudinary
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,7 +48,7 @@ export async function POST(request: NextRequest) {
           folder: 'elesh-products',
           resource_type: 'auto',
         },
-        (error, result) => {
+        (error: unknown, result: any) => {
           if (error) reject(error);
           else resolve(result);
         }
