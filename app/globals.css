@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-ivory font-body text-charcoal antialiased;
+  }
+
+  ::selection {
+    background: rgba(212, 175, 55, 0.22);
+    color: #1a1a1a;
+  }
+
+  a,
+  button,
+  input,
+  textarea,
+  select {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-ivory;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading;
+  }
+}
+
+@layer components {
+  .page-shell {
+    @apply mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-10;
+  }
+
+  .page-fade {
+    @apply animate-fade-in;
+  }
+
+  .gold-button {
+    @apply inline-flex items-center justify-center rounded bg-gold px-7 py-3 text-sm font-medium text-charcoal transition duration-200 hover:-translate-y-px hover:bg-gold-dark;
+  }
+
+  .outlined-button {
+    @apply inline-flex items-center justify-center rounded border border-gold bg-transparent px-7 py-3 text-sm font-medium text-gold transition duration-200 hover:-translate-y-px hover:bg-gold-hover;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
